@@ -210,7 +210,6 @@ public class Disk: Module {
     private let popupView: Popup = Popup(.disk)
     private let settingsView: Settings = Settings(.disk)
     private let portalView: Portal = Portal(.disk, height: 120)
-    private let notificationsView: Notifications = Notifications(.disk)
     private let previewView: Preview = Preview(.disk)
     
     private var capacityReader: CapacityReader?
@@ -238,7 +237,6 @@ public class Disk: Module {
             popup: self.popupView,
             settings: self.settingsView,
             portal: self.portalView,
-            notifications: self.notificationsView,
             preview: self.previewView
         )
         guard self.available else { return }
@@ -306,7 +304,6 @@ public class Disk: Module {
         }
         
         self.portalView.utilizationCallback(d)
-        self.notificationsView.utilizationCallback(d.percentage)
         
         self.menuBar.widgets.filter{ $0.isActive }.forEach { (w: SWidget) in
             switch w.item {

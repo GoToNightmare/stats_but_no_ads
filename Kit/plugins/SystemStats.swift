@@ -42,7 +42,7 @@ public class SystemStats {
             if newValue {
                 self.start()
                 self.registerDevice(omitCooldown: true)
-            } else if !self.control && !self.update {
+            } else if !self.control {
                 self.stop()
             }
         }
@@ -54,19 +54,7 @@ public class SystemStats {
             if newValue {
                 self.start()
                 self.registerDevice(omitCooldown: true)
-            } else if !self.monitoring && !self.update {
-                self.stop()
-            }
-        }
-    }
-    public var update: Bool {
-        get { Store.shared.bool(key: "remote_update", defaultValue: false) }
-        set {
-            Store.shared.set(key: "remote_update", value: newValue)
-            if newValue {
-                self.start()
-                self.registerDevice(omitCooldown: true)
-            } else if !self.monitoring && !self.control {
+            } else if !self.monitoring {
                 self.stop()
             }
         }
@@ -327,7 +315,7 @@ public class SystemStats {
                 client: Client(
                     version: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown",
                     control: SystemStats.shared.control,
-                    update: SystemStats.shared.update,
+                    update: false
                 ),
                 system: SystemStats.System(
                     platform: "macOS",
@@ -382,7 +370,6 @@ public class SystemStats {
                let account = try? JSONDecoder().decode(AccountResponse.self, from: data) {
                 SystemStats.shared.plan = account.plan
                 debug("Remote plan: \(account.plan.rawValue)", log: self.log)
-                NotificationCenter.default.post(name: .remoteAuthenticated, object: nil)
             } else {
                 let bodyString = data.flatMap { String(data: $0, encoding: .utf8) } ?? ""
                 debug("Fetch account failed (\(httpResponse.statusCode)): \(bodyString)", log: self.log)
@@ -391,14 +378,6 @@ public class SystemStats {
     }
     
     private func command(cmd: String, payload: Data?) {
-        if cmd == "update" {
-            guard self.update else { return }
-            debug("received update command", log: self.log)
-            self.triggerUpdate()
-            self.mqtt.controlAck(cmd)
-            return
-        }
-        
         guard self.control else { return }
         
         debug("received command '\(cmd)' with payload: \(String(data: payload ?? Data(), encoding: .utf8) ?? "")", log: self.log)
@@ -450,11 +429,6 @@ public class SystemStats {
 extension SystemStats {
     func disableControl() {
         self.control = false
-    }
-    
-    func triggerUpdate() {
-        debug("received remote update command, checking for a new version...", log: self.log)
-        NotificationCenter.default.post(name: .remoteUpdate, object: nil)
     }
     
     func sleep() {
@@ -993,7 +967,7 @@ class MQTTManager: NSObject {
         
         self.reachability.reachable = { [weak self] in
             if SystemStats.shared.auth.hasCredentials(),
-               SystemStats.shared.monitoring || SystemStats.shared.control || SystemStats.shared.update {
+               SystemStats.shared.monitoring || SystemStats.shared.control {
                 self?.connect()
             }
         }

@@ -14,7 +14,6 @@ build: test-smc clean next-version archive notarize sign verify prepare-dmg prep
 # --- MAIN WORLFLOW FUNCTIONS --- #
 
 archive: test-smc clean
-	osascript -e 'display notification "Exporting application archive..." with title "Build the Stats"'
 	echo "Exporting application archive..."
 
 	xcodebuild \
@@ -35,7 +34,6 @@ archive: test-smc clean
 	echo "Project archived successfully"
 
 notarize:
-	osascript -e 'display notification "Submitting app for notarization..." with title "Build the Stats"'
 	echo "Submitting app for notarization..."
 
 	xcrun notarytool submit --keychain-profile "AC_PASSWORD" --wait $(ZIP_PATH)
@@ -43,13 +41,11 @@ notarize:
 	echo "Stats successfully notarized"
 
 sign:
-	osascript -e 'display notification "Stampling the Stats..." with title "Build the Stats"'
 	echo "Going to staple an application..."
 
 	xcrun stapler staple $(APP_PATH)
 	spctl -a -t exec -vvv $(APP_PATH)
 
-	osascript -e 'display notification "Stats successfully stapled" with title "Build the Stats"'
 	echo "Stats successfully stapled"
 
 verify:
@@ -131,7 +127,6 @@ history:
 	xcrun notarytool history --keychain-profile "AC_PASSWORD"
 
 open:
-	osascript -e 'display notification "Stats signed and ready for distribution" with title "Build the Stats"'
 	echo "Opening working folder..."
 	open $(PWD)
 

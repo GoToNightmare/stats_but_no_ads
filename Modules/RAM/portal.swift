@@ -79,9 +79,7 @@ public class Portal: PortalWrapper {
                 
                 self.usedField?.toolTip = "\(Int(value.usage.rounded(toPlaces: 2) * 100))%"
                 self.freeField?.toolTip = "\(Int((1-value.usage).rounded(toPlaces: 2) * 100))%"
-                if let level = memoryPressureLevels.first(where: { $0.additional as? RAMPressure == value.pressure.value }) {
-                    self.pressureLevelField?.toolTip = localizedString(level.value)
-                }
+                self.pressureLevelField?.toolTip = localizedString(value.pressure.value.rawValue.capitalized)
                 
                 self.circle.toolTip = "\(localizedString("Memory usage")): \(Int(value.usage*100))%"
                 self.circle.setValue(value.usage)

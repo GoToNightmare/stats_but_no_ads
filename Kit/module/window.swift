@@ -45,19 +45,16 @@ open class Window: NSStackView {
     private var modulePreview: PreviewWrapper?
     private var moduleSettings: Settings_v?
     private var popupSettings: Popup_p?
-    private var notificationsSettings: NotificationsWrapper?
     
     private var moduleSettingsContainer: NSStackView?
     private var widgetSettingsContainer: NSStackView?
     private var popupSettingsContainer: NSStackView?
-    private var notificationsSettingsContainer: NSStackView?
     
     private var enableControl: NSControl?
     private var oneViewBtn: NSSwitch?
     
     private let noWidgetsView: EmptyView = EmptyView(msg: localizedString("No available widgets to configure"))
     private let noPopupSettingsView: EmptyView = EmptyView(msg: localizedString("No options to configure for the popup in this module"))
-    private let noNotificationsView: EmptyView = EmptyView(msg: localizedString("No notifications available in this module"))
     
     private var globalOneView: Bool {
         Store.shared.bool(key: "OneView", defaultValue: false)
@@ -69,7 +66,6 @@ open class Window: NSStackView {
     
     private var isPreviewAvailable: Bool
     private var isPopupSettingsAvailable: Bool
-    private var isNotificationsSettingsAvailable: Bool
     
     private var previewView: NSView? = nil
     private var settingsView: NSView? = nil
@@ -79,20 +75,17 @@ open class Window: NSStackView {
         widgets: [SWidget],
         modulePreview: PreviewWrapper?,
         moduleSettings: Settings_v?,
-        popupSettings: Popup_p?,
-        notificationsSettings: NotificationsWrapper?
+        popupSettings: Popup_p?
     ) {
         self.config = config
         self.widgets = widgets
         self.modulePreview = modulePreview
         self.moduleSettings = moduleSettings
         self.popupSettings = popupSettings
-        self.notificationsSettings = notificationsSettings
         
         self.isPreviewAvailable = config.previewConfig["available"] as? Bool ?? false
         
         self.isPopupSettingsAvailable = config.settingsConfig["popup"] as? Bool ?? false
-        self.isNotificationsSettingsAvailable = config.settingsConfig["notifications"] as? Bool ?? false
         
         super.init(frame: NSRect.zero)
         
@@ -180,9 +173,6 @@ open class Window: NSStackView {
         if self.isPopupSettingsAvailable {
             labels.append(localizedString("Popup"))
         }
-        if self.isNotificationsSettingsAvailable {
-            labels.append(localizedString("Notifications"))
-        }
         
         let segmentedControl = NSSegmentedControl(labels: labels, trackingMode: .selectOne, target: self, action: #selector(self.switchTabs))
         segmentedControl.segmentDistribution = .fillEqually
@@ -233,20 +223,6 @@ open class Window: NSStackView {
             }()
             tabView.addTabViewItem(popupTab)
         }
-        
-        if self.isNotificationsSettingsAvailable {
-            let notificationsTab: NSTabViewItem = NSTabViewItem()
-            notificationsTab.label = localizedString("Notifications")
-            notificationsTab.view = {
-                let view = ScrollableStackView(frame: tabView.frame)
-                view.stackView.spacing = 0
-                self.notificationsSettingsContainer = view.stackView
-                self.loadNotificationsSettings()
-                return view
-            }()
-            tabView.addTabViewItem(notificationsTab)
-        }
-        
         let widgetSelector = WidgetSelectorView(module: self.config.name, widgets: self.widgets, stateCallback: self.loadWidget)
         
         view.addArrangedSubview(widgetSelector)
@@ -307,16 +283,6 @@ open class Window: NSStackView {
             self.popupSettingsContainer?.addArrangedSubview(view)
         } else {
             self.popupSettingsContainer?.addArrangedSubview(self.noPopupSettingsView)
-        }
-    }
-    
-    private func loadNotificationsSettings() {
-        self.notificationsSettingsContainer?.subviews.forEach{ $0.removeFromSuperview() }
-        
-        if let notificationsView = self.notificationsSettings {
-            self.notificationsSettingsContainer?.addArrangedSubview(notificationsView)
-        } else {
-            self.notificationsSettingsContainer?.addArrangedSubview(self.noNotificationsView)
         }
     }
     

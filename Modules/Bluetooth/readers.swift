@@ -63,7 +63,7 @@ internal class DevicesReader: Reader<[BLEDevice]>, CBCentralManagerDelegate, CBP
         super.start()
         self.stateQueue.sync {
             if self.manager == nil {
-                self.manager = CBCentralManager(delegate: self, queue: nil)
+                self.manager = CBCentralManager(delegate: self, queue: nil, options: [CBCentralManagerOptionShowPowerAlertKey: false])
             }
         }
     }

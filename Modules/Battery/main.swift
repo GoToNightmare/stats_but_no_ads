@@ -59,7 +59,6 @@ public class Battery: Module {
     private let popupView: Popup
     private let settingsView: Settings
     private let portalView: Portal
-    private let notificationsView: Notifications
     
     private var usageReader: UsageReader? = nil
     private var processReader: ProcessReader? = nil
@@ -75,14 +74,12 @@ public class Battery: Module {
         self.settingsView = Settings(.battery)
         self.popupView = Popup(.battery)
         self.portalView = Portal(.battery, height: 70)
-        self.notificationsView = Notifications(.battery)
         
         super.init(
             moduleType: .battery,
             popup: self.popupView,
             settings: self.settingsView,
-            portal: self.portalView,
-            notifications: self.notificationsView
+            portal: self.portalView
         )
         guard self.available else { return }
         
@@ -110,11 +107,6 @@ public class Battery: Module {
         self.setReaders([self.usageReader, self.processReader])
     }
     
-    public override func willTerminate() {
-        guard self.isAvailable() else { return }
-        self.notificationsView.willTerminate()
-    }
-    
     public override func isAvailable() -> Bool {
         let snapshot = IOPSCopyPowerSourcesInfo().takeRetainedValue()
         let sources = IOPSCopyPowerSourcesList(snapshot).takeRetainedValue() as Array
@@ -126,7 +118,6 @@ public class Battery: Module {
         
         self.popupView.usageCallback(value)
         self.portalView.loadCallback(value)
-        self.notificationsView.usageCallback(value)
         
         self.menuBar.widgets.filter{ $0.isActive }.forEach { (w: SWidget) in
             switch w.item {

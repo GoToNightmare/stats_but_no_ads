@@ -43,8 +43,6 @@
 	<string>This permission allows displaying the connected Wi-Fi network name and BSSID.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
-	<key>NSUserNotificationAlertStyle</key>
-	<string>alert</string>
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>eu.exelban.Stats.SMC.Helper</key>

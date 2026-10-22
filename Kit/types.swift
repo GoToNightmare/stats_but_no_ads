@@ -11,6 +11,14 @@
 
 import Cocoa
 
+internal struct Version {
+    var major: Int = 0
+    var minor: Int = 0
+    var patch: Int = 0
+
+    var beta: Int? = nil
+}
+
 public struct DoubleValue {
     public var ts: Date = Date()
     public let value: Double
@@ -298,7 +306,6 @@ public extension Notification.Name {
     static let toggleSettings = Notification.Name("toggleSettings")
     static let toggleModule = Notification.Name("toggleModule")
     static let togglePopup = Notification.Name("togglePopup")
-    static let popupVisibilityChanged = Notification.Name("popupVisibilityChanged")
     static let toggleWidget = Notification.Name("toggleWidget")
     static let togglePreview = Notification.Name("togglePreview")
     static let openModuleSettings = Notification.Name("openModuleSettings")
@@ -316,8 +323,6 @@ public extension Notification.Name {
     static let combinedModulesPopup = Notification.Name("combinedModulesPopup")
     static let remoteLoginSuccess = Notification.Name("remoteLoginSuccess")
     static let remoteState = Notification.Name("remoteState")
-    static let remoteAuthenticated = Notification.Name("remoteAuthenticated")
-    static let remoteUpdate = Notification.Name("remoteUpdate")
     static let openWindow = Notification.Name("openWindow")
 }
 

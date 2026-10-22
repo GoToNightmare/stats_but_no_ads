@@ -7,24 +7,22 @@
 
 macOS system monitor in your menu bar
 
+This fork removes donation prompts and promotional links, the setup wizard, app updates, and all notification banners and sounds. It starts in the menu bar without opening a window. Click a menu bar widget to see its stats or open settings; confirmations for actions such as resetting settings or turning off a fan remain.
+
+Previously saved donation, update, and notification preferences cannot re-enable those features. Existing pending and delivered notifications are cleared at launch. Updates must be built and installed manually from this fork.
+
 ## Installation
-### Manual
-You can download the latest version [here](https://github.com/exelban/stats/releases/latest/download/Stats.dmg).
-This will download a file called `Stats.dmg`. Open it and move the app to the application folder.
+### Build this fork
+Install full Xcode, select it as the active developer directory, then run from this repository:
 
-### Homebrew
-To install it using Homebrew, open the Terminal app and type:
-```bash
-brew install stats
+```sh
+xcodebuild -project Stats.xcodeproj -scheme Stats -configuration Release \
+  -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
 ```
 
-### Headless (SSH)
-To install Stats remotely over SSH and set it up as a remote monitoring agent, run:
-```bash
-curl -fsSL https://cdn.mac-stats.com/install.sh | bash
-```
-The script installs the app, enables the Remote module and prints a URL with an authorization code - open it on any device and sign in to your System Stats account to authorize the machine. After that Stats starts streaming metrics to your account and is registered to launch automatically at login and restart if it stops.
-The Mac needs an active user session (a locked screen is fine) to run the app; on a fully headless machine Stats will start at the next login.
+The app is written to `build/Build/Products/Release/Stats.app`. Quit any running copy of Stats before installing it. This command produces an unsigned local build; distribution and privileged fan helper installation require appropriate signing.
+
+Homebrew and the original project's release downloads install upstream Stats, which includes the prompts removed here.
 
 ### Uninstall
 Run the uninstall script bundled with the app (requires administrator privileges to remove the SMC helper):
@@ -98,17 +96,7 @@ Most probably because it's a duplicated issue and there is an answer to the ques
 So, if your issue was closed without any response, most probably it already has a response.
 
 ### External API
-Stats does not collect any telemetry or analytics. The only external requests it makes are to the following APIs:
-
-- https://api.mac-stats.com – For update checks and retrieving the public IP address
-- https://api.github.com – Fallback for update checks
-
-Both of these APIs are used to check for updates. Additionally, an external request is required to obtain the public IP address. I do not want to use any third-party providers for retrieving the public IP address, so I use my own server for this purpose.
-
-If you have concerns about these requests, you have a few options:
-
-- propose a PR that allows these features to work without an external server
-- block both of these servers using any network filtering app (if you're reading this, you're likely using something like Little Snitch, so you can easily do this). In this case do not expect to receive any updates or see your public IP in the network module.
+App update checks and downloads have been removed. The Network module can still query `api.mac-stats.com` for your public IP address and perform its configured connectivity checks. The optional Remote module still connects to System Stats when you sign in; remote app updates are disabled in this fork.
 
 ### How to contribute to the project?
 If you want to develop a new feature, or you've found something that doesn't work, the first step is to open an issue so the feature or problem can be discussed. Pull requests should only be opened for existing issues and after discussion; otherwise, they may be closed automatically. There are a few cases where this can be skipped: language changes, and contributors who have already made significant contributions and whose implementations align well with the project.

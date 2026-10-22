@@ -58,7 +58,6 @@ public class CPU: Module {
     private let popupView: Popup
     private let settingsView: Settings
     private let portalView: Portal
-    private let notificationsView: Notifications
     private let previewView: Preview
     
     private var loadReader: LoadReader? = nil
@@ -127,7 +126,6 @@ public class CPU: Module {
         self.settingsView = Settings(.CPU)
         self.popupView = Popup(.CPU)
         self.portalView = Portal(.CPU, height: 120)
-        self.notificationsView = Notifications(.CPU)
         self.previewView = Preview(.CPU)
         
         super.init(
@@ -135,7 +133,6 @@ public class CPU: Module {
             popup: self.popupView,
             settings: self.settingsView,
             portal: self.portalView,
-            notifications: self.notificationsView,
             preview: self.previewView
         )
         guard self.available else { return }
@@ -199,7 +196,6 @@ public class CPU: Module {
         
         self.popupView.loadCallback(value)
         self.portalView.callback(value)
-        self.notificationsView.loadCallback(value)
         self.previewView.loadCallback(value)
         
         self.menuBar.widgets.filter{ $0.isActive }.forEach { [self] (w: SWidget) in
