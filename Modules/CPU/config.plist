@@ -92,8 +92,6 @@
 	<dict>
 		<key>popup</key>
 		<true/>
-		<key>notifications</key>
-		<true/>
 	</dict>
 	<key>Preview</key>
 	<dict>

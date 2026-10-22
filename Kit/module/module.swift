@@ -97,7 +97,6 @@ open class Module {
     private var settingsView: Settings_v? = nil
     private var popup: PopupWindow? = nil
     private var popupView: Popup_p? = nil
-    private var notificationsView: NotificationsWrapper? = nil
     private var previewView: PreviewWrapper? = nil
     
     private let log: NextLog
@@ -115,7 +114,6 @@ open class Module {
         popup: Popup_p? = nil,
         settings: Settings_v? = nil,
         portal: Portal_p? = nil,
-        notifications: NotificationsWrapper? = nil,
         preview: PreviewWrapper? = nil
     ) {
         self.moduleType = moduleType
@@ -125,7 +123,6 @@ open class Module {
         self.log = NextLog.shared.copy(category: self.config.name)
         self.settingsView = settings
         self.popupView = popup
-        self.notificationsView = notifications
         self.previewView = preview
         self.menuBar = MenuBar(moduleName: self.config.name)
         self.available = self.isAvailable()
@@ -164,8 +161,7 @@ open class Module {
             widgets: self.menuBar.widgets,
             modulePreview: self.previewView,
             moduleSettings: self.settingsView,
-            popupSettings: self.popupView,
-            notificationsSettings: self.notificationsView
+            popupSettings: self.popupView
         )
         
         self.popup = PopupWindow(title: self.config.name, module: self.moduleType, view: self.popupView, visibilityCallback: self.popupVisibilityCallback)

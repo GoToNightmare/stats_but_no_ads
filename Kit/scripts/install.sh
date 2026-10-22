@@ -13,7 +13,6 @@ UID_NUM="$(id -u)"
 
 VERSION="latest"
 ENABLE_CONTROL="false"
-ENABLE_UPDATE="false"
 REAUTH=0
 APP_DST="/Applications/Stats.app"
 CUSTOM_APP_DST=0
@@ -28,7 +27,6 @@ usage() {
     echo "  -v, --version TAG    Install a specific release tag (default: latest)"
     echo "  -a, --app PATH       Target location of Stats.app (default: /Applications/Stats.app)"
     echo "  -c, --control        Allow remote control commands"
-    echo "  -u, --update         Allow remote update trigger"
     echo "  -r, --reauth         Force a fresh login even if tokens already exist"
     echo "  -h, --help           Show this help"
 }
@@ -47,7 +45,6 @@ while [[ "$#" -gt 0 ]]; do case "$1" in
     fi
     APP_DST="$2"; CUSTOM_APP_DST=1; shift;;
   -c|--control) ENABLE_CONTROL="true";;
-  -u|--update) ENABLE_UPDATE="true";;
   -r|--reauth) REAUTH=1;;
   -h|--help) usage; exit 0;;
   *) echo "Unknown parameter passed: $1"; exit 1;;
@@ -316,11 +313,9 @@ fi
 /usr/bin/defaults delete "$BUNDLE_ID" access_token >/dev/null 2>&1 || true
 /usr/bin/defaults delete "$BUNDLE_ID" refresh_token >/dev/null 2>&1 || true
 /usr/bin/defaults write "$BUNDLE_ID" remote_id -string "$DEVICE_ID"
-/usr/bin/defaults write "$BUNDLE_ID" setupProcess -bool true
 /usr/bin/defaults write "$BUNDLE_ID" Remote_state -bool true
 /usr/bin/defaults write "$BUNDLE_ID" remote_monitoring -bool true
 /usr/bin/defaults write "$BUNDLE_ID" remote_control -bool "$ENABLE_CONTROL"
-/usr/bin/defaults write "$BUNDLE_ID" remote_update -bool "$ENABLE_UPDATE"
 echo "Configured the Remote module (device: $DEVICE_ID)"
 
 PLIST="$HOME/Library/LaunchAgents/$AGENT_LABEL.plist"

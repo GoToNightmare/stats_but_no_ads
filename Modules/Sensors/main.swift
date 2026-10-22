@@ -17,7 +17,6 @@ public class Sensors: Module {
     private let popupView: Popup
     private let settingsView: Settings
     private let portalView: Portal
-    private let notificationsView: Notifications
     
     private var fanValueState: FanValue {
         FanValue(rawValue: Store.shared.string(key: "\(self.config.name)_fanValue", defaultValue: "percentage")) ?? .percentage
@@ -29,15 +28,13 @@ public class Sensors: Module {
         self.settingsView = Settings(.sensors)
         self.popupView = Popup()
         self.portalView = Portal(.sensors)
-        self.notificationsView = Notifications(.sensors)
         self.selectedSensor = Store.shared.string(key: "\(ModuleType.sensors.stringValue)_sensor", defaultValue: "Average System Total")
         
         super.init(
             moduleType: .sensors,
             popup: self.popupView,
             settings: self.settingsView,
-            portal: self.portalView,
-            notifications: self.notificationsView
+            portal: self.portalView
         )
         guard self.available else { return }
         
@@ -48,7 +45,6 @@ public class Sensors: Module {
         self.settingsView.setList(self.sensorsReader?.list.sensors)
         self.popupView.setup(self.sensorsReader?.list.sensors)
         self.portalView.setup(self.sensorsReader?.list.sensors)
-        self.notificationsView.setup(self.sensorsReader?.list.sensors)
         
         self.settingsView.callback = { [weak self] in
             self?.sensorsReader?.read()
@@ -63,7 +59,6 @@ public class Sensors: Module {
                     self?.popupView.setup(self?.sensorsReader?.list.sensors)
                     self?.portalView.setup(self?.sensorsReader?.list.sensors)
                     self?.settingsView.setList(self?.sensorsReader?.list.sensors)
-                    self?.notificationsView.setup(self?.sensorsReader?.list.sensors)
                 }
             }
         }
@@ -74,7 +69,6 @@ public class Sensors: Module {
                     self?.popupView.setup(self?.sensorsReader?.list.sensors)
                     self?.portalView.setup(self?.sensorsReader?.list.sensors)
                     self?.settingsView.setList(self?.sensorsReader?.list.sensors)
-                    self?.notificationsView.setup(self?.sensorsReader?.list.sensors)
                 }
             }
         }
@@ -104,7 +98,6 @@ public class Sensors: Module {
         
         self.popupView.usageCallback(value.sensors)
         self.portalView.usageCallback(value.sensors)
-        self.notificationsView.usageCallback(value.sensors)
         
         let activeWidgets = self.menuBar.widgets.filter{ $0.isActive }
         self.sensorsReader?.sleepMode(state: activeWidgets.contains(where: {$0.item is Label}) && activeWidgets.count == 1)

@@ -141,7 +141,6 @@ public class Network: Module {
     private let popupView: Popup
     private let settingsView: Settings
     private let portalView: Portal
-    private let notificationsView: Notifications
     private let previewView: Preview
     
     private var usageReader: UsageReader? = nil
@@ -174,7 +173,6 @@ public class Network: Module {
         self.settingsView = Settings(.network)
         self.popupView = Popup(.network)
         self.portalView = Portal(.network, height: 90)
-        self.notificationsView = Notifications(.network)
         self.previewView = Preview(.network)
         
         super.init(
@@ -182,7 +180,6 @@ public class Network: Module {
             popup: self.popupView,
             settings: self.settingsView,
             portal: self.portalView,
-            notifications: self.notificationsView,
             preview: self.previewView
         )
         guard self.available else { return }
@@ -253,7 +250,6 @@ public class Network: Module {
         
         self.popupView.usageCallback(value)
         self.portalView.usageCallback(value)
-        self.notificationsView.usageCallback(value)
         self.previewView.usageCallback(value)
         
         var upload: Int64 = value.bandwidth.upload
@@ -357,7 +353,6 @@ public class Network: Module {
         guard let value = raw, self.enabled else { return }
         
         self.popupView.connectivityCallback(value)
-        self.notificationsView.connectivityCallback(value)
         self.previewView.connectivityCallback(value)
         
         self.menuBar.widgets.filter{ $0.isActive }.forEach { (w: SWidget) in
